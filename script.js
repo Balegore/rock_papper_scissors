@@ -15,13 +15,6 @@ function computerPlay(){    //computer choose randomly between rock paper scisso
     return computerChoice;  
 }
 
-
-function playerSelection(playerChoice){     //get user selection
-    playerChoice = playerChoice.toLowerCase();
-    //console.log(playerChoice);
-    return playerChoice;
-}
-
 function caseFix(toFix){
     firstLetter = toFix.substr(0,1);    //get first letter 
     firstLetter = firstLetter.toUpperCase(); //convert to upper case
@@ -29,56 +22,91 @@ function caseFix(toFix){
     return fixedCase;
 }
 
-function playGame(player){    //compare results and decide winner 
-    player = playerSelection(player);
-    let message = "";
-    let computer = computerPlay();
+function displayResults(computerMessage, message){     //displays messages to DOM
+    document.getElementById("computerplayer").innerText = computerMessage;
+    document.getElementById("message").innerText = message;
+    document.getElementById("gamesplayed").innerText = gamesPlayed + "/5";
+}
+
+function gameRoutine(player){    //compare results and decide winner 
+      
+    gamesPlayed++;
     
+    let message = " ";    
+    let computer = computerPlay();
+    let computerMessage = "I choose " +  caseFix(computer) + "."; 
+
     if (player == computer){        //check game tied
-        message = "You Tied! you both chose " + caseFix(player) + ".";
+        message = "We Tied! We both chose " + caseFix(player) + ".";
     }
     else{           //check if game has been won        
         let gameWin =
-        (player === 'rock' && computer === 'scissors') ? true:
-        (player === 'paper' && computer === 'rock') ? true:
-        (player === 'scissors' && computer === 'paper') ? true:
-        false;
-            if(gameWin === true){     //game won
+                        (player === 'rock' && computer === 'scissors') ? true:
+                        (player === 'paper' && computer === 'rock') ? true:
+                        (player === 'scissors' && computer === 'paper') ? true:
+                        false;
+            if(gameWin === true){       //game won
+                gamesWon = gamesWon + 1;
                 message = "You Win! " + caseFix(player) + " beats " + caseFix(computer) + "!"; 
             }
             else{    //game lost
                 message = "You Lose! " + caseFix(computer) + " beats " + caseFix(player) + "!";
             }
     }
-return message;   
-}
-
-function wordCheck(message){
-    let errorCheck = true;
-    while(errorCheck){
-        console.log("Invalid Input");
-        errorCheck = (message === 'rock' || message === 'paper' || message === 'scissors') ? false : true; //check if user put in proper word
-        if(errorCheck === true)
-        {
-        message = prompt("Invalid input please use rock, paper, or scissors");    
-        }
-        if(message === null){break;}
-
-    }
-    return message; 
-}
-
-function game(player){
-    let n = 0;
-    let message = ""
-
-    while (n < 5){
-        message = prompt("Please choose rock, paper, or scissors");
-        message = wordCheck(message);
-        message = playGame(message);        
-        console.log(message);       
-        n++;
-    }
     
+    displayResults(computerMessage, message);
 }
-game(); //start game loop
+
+function playGame(player){  //checks if you've played over 5 games and if you won enough times
+    
+    if(gamesPlayed >= 5){
+    return;
+    }
+    else{
+        console.log(gamesWon);
+        gameRoutine(player);
+
+        if(gamesPlayed >= 5 ){
+            message =   (gamesWon >=3) ? "You Won " + gamesWon + " of 5 games. You're the Winner!":
+                        "You Won " + gamesWon + " of 5 games. You lose!";
+            let computerMessage = " ";
+            displayResults(computerMessage, message, gamesPlayed);
+        }
+    }
+}
+
+function resetGame(){
+    gamesPlayed = 0;
+    gamesWon = 0
+
+    document.getElementById("computerplayer").innerText = "Let's play a game, best of five.";
+    document.getElementById("message").innerHTML = "&nbsp"; 
+    document.getElementById("gamesplayed").innerText = gamesPlayed + "/5";
+}
+
+const rock = document.querySelector('#rock');           //add variables for all buttons
+const scissors = document.querySelector('#scissors');
+const paper  = document.querySelector('#paper');
+const reset = document.querySelector('#reset');
+
+let gamesPlayed = 0;
+let gamesWon = 0;
+
+
+rock.addEventListener('click', () => {
+    playGame("rock")
+   
+    });
+scissors.addEventListener('click', () => {
+    playGame("scissors")
+  
+    });
+paper.addEventListener('click', () => {
+    playGame("paper")
+
+    });
+
+reset.addEventListener('click', () => {
+    resetGame()
+    });    
+
