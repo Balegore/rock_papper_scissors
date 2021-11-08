@@ -37,7 +37,8 @@ function gameRoutine(player){    //compare results and decide winner
     let computerMessage = "I choose " +  caseFix(computer) + "."; 
 
     if (player == computer){        //check game tied
-        message = "We Tied! We both chose " + caseFix(player) + ".";
+        message = "We Tied! We both chose " + caseFix(player) + ". Try again.";
+        gamesPlayed--;
     }
     else{           //check if game has been won        
         let gameWin =
@@ -67,10 +68,19 @@ function playGame(player){  //checks if you've played over 5 games and if you wo
         gameRoutine(player);
 
         if(gamesPlayed >= 5 ){
-            message =   (gamesWon >=3) ? "You Won " + gamesWon + " of 5 games. You're the Winner!":
-                        "You Won " + gamesWon + " of 5 games. You lose!";
-            let computerMessage = " ";
-            displayResults(computerMessage, message, gamesPlayed);
+            
+            let message = "";
+            let computerMessage = "";
+              
+            if(gamesWon >=3){
+                message = "You Won " + gamesWon + " of 5 games.";
+                computerMessage = "YOU WIN!"
+            }
+            else{
+                message = "You lost " + (5-gamesWon) + " of 5 games.";                        
+                computerMessage = "YOU LOSE!";
+            }
+            displayResults(computerMessage, message);
         }
     }
 }
@@ -84,29 +94,24 @@ function resetGame(){
     document.getElementById("gamesplayed").innerText = gamesPlayed + "/5";
 }
 
-const rock = document.querySelector('#rock');           //add variables for all buttons
-const scissors = document.querySelector('#scissors');
-const paper  = document.querySelector('#paper');
-const reset = document.querySelector('#reset');
+function startGame(){
+    if(this.id === "reset"){
+        resetGame();
+        return;                                                                                                                                                                                                                      
+    }
+    else{
+        playGame(this.id);        
+    }
+}
 
+function test(){
+    console.log(this.id);
+}
+
+const btns = document.querySelectorAll('button');
 let gamesPlayed = 0;
 let gamesWon = 0;
 
 
-rock.addEventListener('click', () => {
-    playGame("rock")
-   
-    });
-scissors.addEventListener('click', () => {
-    playGame("scissors")
-  
-    });
-paper.addEventListener('click', () => {
-    playGame("paper")
-
-    });
-
-reset.addEventListener('click', () => {
-    resetGame()
-    });    
+btns.forEach(btns => btns.addEventListener('click', startGame))
 
